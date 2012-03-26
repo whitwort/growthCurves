@@ -14,7 +14,7 @@ url <- "https://github.com/whitwort/growthCurves/blob/master/growthCurves.R"
 eval(parse(text = getURL(url, ssl.verifypeer = FALSE)), envir=.GlobalEnv)
 ```
 
-Unfortunately, using source(url) directly won't work because 'source' doesn't support HTTPS used by github).  You'll need to have the CRAN package 'RCurl' installed for this to work.
+Unfortunately, using source(url) directly won't work because 'source' doesn't support HTTPS used by github.  You'll need to have the CRAN package 'RCurl' installed for this to work.
 
 
 ##Running an analysis
