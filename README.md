@@ -15,7 +15,7 @@ source("https://github.com/whitwort/growthCurves/blob/master/growthCurves.R")
 ##Running an analysis
 The wrapper function 'analyzeGrowthCurves' provides a simple interface to running a full analysis which produces growth curve graphs, incorporates well annotations, and calculates a doubling time for each well.
 
-With the [example files](/examples) included in this repository in the current working directory, this function could be called with:
+With the [example files](https://github.com/whitwort/growthCurves/tree/master/examples) included in this repository in the current working directory, this function could be called with:
 
 ```r
 analyzeGrowthCurves( tablePath="sample.asc", annotationPath="plateSetup.txt", savePath="" )
