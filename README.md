@@ -26,7 +26,7 @@ With the [example files](https://github.com/whitwort/growthCurves/tree/master/ex
 analyzeGrowthCurves( tablePath="sample.asc", annotationPath="plateSetup.txt", savePath="" )
 ```
 
-This will run an analysis producing an number of files in the current working directory.  'results.txt' will hold a tab-delimited table incorporating well annotations and the calculated doubling times.  Images files will also be produced showing each growth curve individually or as a grid in 'composite.png'.
+This will run an analysis producing an number of files in the current working directory.  'results.txt' will hold a tab-delimited table incorporating well annotations and the calculated doubling times.  Image files will also be produced showing each growth curve individually or as a grid in 'composite.png'.
 
 
 ## License
