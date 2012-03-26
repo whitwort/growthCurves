@@ -4,14 +4,6 @@ A small [R script](http://www.r-project.org/) designed to aid analysis of liquid
 
 Deeper documentation will be comming soon, but what follows should be enough to get started if you are familiar with R.
 
-##Loading the script
-
-Although growthCurves.R is not yet available as a R package, it is implemented in a single R script which can be easily loaded with the 'source' function.  To load the latest development version of the script from this Github repository use:
-
-```r
-source("https://github.com/whitwort/growthCurves/blob/master/growthCurves.R")
-```
-
 ##Running an analysis
 The wrapper function 'analyzeGrowthCurves' provides a simple interface to running a full analysis which produces growth curve graphs, incorporates well annotations, and calculates a doubling time for each well.
 
