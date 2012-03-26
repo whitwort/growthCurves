@@ -4,6 +4,7 @@ A small [R script](http://www.r-project.org/) designed to aid analysis of liquid
 
 Deeper documentation will be comming soon, but what follows should be enough to get started if you are familiar with R.
 
+
 ##Running an analysis
 The wrapper function 'analyzeGrowthCurves' provides a simple interface to running a full analysis which produces growth curve graphs, incorporates well annotations, and calculates a doubling time for each well.
 
@@ -14,3 +15,10 @@ analyzeGrowthCurves( tablePath="sample.asc", annotationPath="plateSetup.txt", sa
 ```
 
 This will run an analysis producing an number of files in the current working directory.  'results.txt' will hold a tab-delimited table incorporating well annotations and the calculated doubling times.  Images files will also be produced showing each growth curve individually or as a grid in 'composite.png'.
+
+
+## License
+
+Copyright © 2012 Gregg Whitworth
+
+Licensed under the [MIT License](http://mit-license.org).
