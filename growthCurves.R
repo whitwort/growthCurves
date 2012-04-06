@@ -6,6 +6,7 @@ analyzeGrowthCurves <- function(tablePath,
                                 annotationParser  = plateSetup,
                                 plateLabels       = default.plate.96,
                                 filters           = c(default.lagFilter, default.plateauFilter),
+                                zipPath           = NULL,
                                 ...
                                 )  {
   
@@ -34,20 +35,20 @@ analyzeGrowthCurves <- function(tablePath,
   
   #Load the annotations if we're given a file path
   if (!is.null(annotationPath)) {
-    resultTable <- wrapCall(annotationParser)(filePath=annotationPath)
+    resultTable <- wrapCall(annotationParser)(filePath = annotationPath)
   } else {
-    resultTable <- data.frame(row.names=optArgs$wellLabels, check.names=TRUE)
+    resultTable <- data.frame(row.names=optArgs$wellLabels, check.names = TRUE)
   }
   
   #Run analysis functions
-  resultTable$doublingTime <- wrapCall(doublingTime)(table=table)
+  resultTable$doublingTime <- wrapCall(doublingTime)(table = table)
   
   #Save analysis and original annotations to optArgs
   optArgs$annotations <- resultTable
   
   #Run visualization functions, if we were given a save path
   if (!is.null(savePath)) {
-    wrapCall(makeODPlots)(table=table, savePath=savePath)
+    wrapCall(makeODPlots)(table = table, savePath = savePath)
   }
   
   #Save the analysis and annotations out to a result table and return it
@@ -55,24 +56,29 @@ analyzeGrowthCurves <- function(tablePath,
     write.table(resultTable, paste(savePath, "results.txt", sep="/"), sep="\t", col.names=NA)
   }
   
+  #If we were given a zip path
+  if (!is.null(zipPath) && !is.null(savePath)) {
+    zip( zipPath, files = dir(savePath) )
+  }
+  
   return(resultTable)
   
 }
 
-#Default well labels and plate matrixes for 96- and 384-well plates
-default.wells.96 = paste(
-  rep(c("A","B","C","D","E","F","G","H"), each = 12), 
-  1:12, 
-  sep = "")
+#Default labels for 96- and 384-well plates (character matrix with the same shape as the plate)
+default.plate.96 = matrix(
+  data  = paste( rep(LETTERS[1:8], each = 12), 1:12, sep = ""), 
+  nrow  = 8, 
+  ncol  = 12, 
+  byrow = TRUE
+  )
 
-default.plate.96 = matrix(data=default.labels.96, nrow=8, ncol=12, byrow=TRUE)
-
-default.wells.384 = paste(
-  rep(c("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"), each = 24), 
-  1:24, 
-  sep = "")
-
-default.plate.384 = matrix(data=default.labels.384, nrow=16, ncol=24, byrow=TRUE)
+default.plate.384 = matrix(
+  data  = paste( rep(LETTERS[1:16], each = 24), 1:24, sep = ""), 
+  nrow  = 16, 
+  ncol  = 24, 
+  byrow = TRUE
+  )
 
 #OD table parsers
 csvTable <- function(filePath) { return( read.csv(filePath) ) }
@@ -85,7 +91,7 @@ xlsTable <- function(filePath) {
 
 #TODO Magellan export instructions
 magellanTable <- function(filePath, 
-                          wellLabels,        #= default.wells.96, 
+                          wellLabels        = c(t(default.plate.96)),
                           table.postprocess = validateTable
                           ) {
   
@@ -97,7 +103,7 @@ magellanTable <- function(filePath,
   
   #Convert the first column to a numeric vector by stripping the "s" from each entry
   ctime <- as.character(table$time)
-  ntime <- as.numeric(substr(ctime, start=1, stop=nchar(ctime)-1 ))
+  ntime <- as.numeric(substr(ctime, start = 1, stop = nchar(ctime)-1 ))
   
   table$time <- ntime
   
@@ -115,7 +121,7 @@ validateTable <- function(table) {
   #If there are bad rows
   if (TRUE %in% badRows) {
     print("The following timepoints will be purged because they contain incomplete data:")
-    print(paste(table$time[badRows], sep=","))
+    print(paste(table$time[badRows], sep = ","))
     
     #Dump only good rows back into table
     table <- table[!badRows,]
@@ -145,7 +151,7 @@ concatenateTables <- function(tables,
     #Apply first offset to the second table, and so on...
     tables[2:l], 
     timeOffsets[1:(l-1)], 
-    SIMPLIFY=FALSE
+    SIMPLIFY = FALSE
     
   )
   
@@ -170,7 +176,7 @@ plateSetup <- function(filePath, plateLabels = default.plate.96) {
     #Extract the well definition text and the category label from this line
     m <- strsplit(line, "(\\s*):(\\s*)")[[1]]
     wells <- parseWells(m[1])
-    labels <- rep(m[2], times=length(wells))
+    labels <- rep(m[2], times = length(wells))
     
     #Assign labels to the wells vector as names
     names(labels) <- wells
@@ -187,7 +193,7 @@ plateSetup <- function(filePath, plateLabels = default.plate.96) {
     
     #If stripping all whitespace gives us a label, return it
     stripped <- gsub("\\s", "", wells)
-    if ( stripped %in% plateLabels ) { return( stripped ) }
+    if (stripped %in% plateLabels) { return( stripped ) }
     
     #If we're passed a block range ("->")
     rangeSplit <- strsplit(wells, "(\\s*)->(\\s*)")[[1]]
@@ -216,19 +222,19 @@ plateSetup <- function(filePath, plateLabels = default.plate.96) {
 
   
   #Load the file by line, ignoring lines with only whitespace
-  fileLines <- scan(filePath, character(0), sep="\n", strip.white=TRUE)
+  fileLines <- scan(filePath, character(0), sep = "\n", strip.white=TRUE)
   
   #Calculate a vector containing the indexes of each block heading in lines 
   #where blocks headings are defined by lines without a ":"
   blockHeadings <- (1:length(fileLines))[!grepl(":", fileLines, fixed=TRUE)]
   
   #For each block heading...
-  annotations <- data.frame(row.names=c(t(plateLabels)), check.rows=TRUE)
+  annotations <- data.frame(row.names = c(t(plateLabels)), check.rows = TRUE)
   for (i in 1:length(blockHeadings)) {
     
     #Get this and the next heading index
     thisHeadingIndex <- blockHeadings[i]
-    nextHeadingIndex <- min(blockHeadings[i+1], length(fileLines)+1, na.rm=TRUE)
+    nextHeadingIndex <- min(blockHeadings[i+1], length(fileLines)+1, na.rm = TRUE)
     blockName <- fileLines[thisHeadingIndex]
     
     #Parse this block
@@ -251,11 +257,11 @@ plateSetup <- function(filePath, plateLabels = default.plate.96) {
 }
 
 #Filter Functions, return logical vectors where FALSE indicates bad data
-default.lagFilter <- function(od, lag.window=3) {
+default.lagFilter <- function(od, lag.window = 3) {
   return(od > (median(od[1:lag.window]) * 2))
 }
 
-default.plateauFilter <- function(od, plateau.cutoff=0.85) {
+default.plateauFilter <- function(od, plateau.cutoff = 0.85) {
   return(od < plateau.cutoff)
 }
 
@@ -274,7 +280,7 @@ bubbleFilter <- function(od, bubble.tolerance = 3, bubble.neighborhoodSize = 3) 
   }
   
   #Caclulate a neighborhood cutoff value based on the given tolerance parameter
-  cutoff <- mean(neighborhoodDelta)*(1+bubble.tolerance)
+  cutoff <- mean(neighborhoodDelta) * (1 + bubble.tolerance)
   
   #Keep only points with neighborhood deltas below the cutoff
   goodPoints <- (neighborhoodDelta < cutoff)
@@ -309,7 +315,7 @@ doublingTime <- function(table,
     return( number.format(log(2) / coef(fit)["time"] / 60 ) )
   }
   
-  return( apply(table[2:length(table)], MARGIN=2, FUN=calculateDT) )
+  return( apply(table[2:length(table)], MARGIN = 2, FUN = calculateDT) )
   
 }
 
@@ -330,7 +336,13 @@ makeODPlots <- function(table, savePath,
   ylim <- c( min(table[2:length(table)]), max(table[2:length(table)]) )
   
   #od Plotting function (used to make both individual and aggregated graphs)
-  odPlot <- function(well, main=NULL, xlab=NULL, ylab=NULL, ul.label=NULL, lr.label=NULL) {
+  odPlot <- function(well, 
+                     main     = NULL, 
+                     xlab     = NULL, 
+                     ylab     = NULL, 
+                     ul.label = NULL, 
+                     lr.label = NULL
+                     ) {
     
     #Apply each filter to the column of OD data
     filter <- c(TRUE)
@@ -349,7 +361,7 @@ makeODPlots <- function(table, savePath,
          )
     
     #Plot the filtered points in black
-    points(table$time[!filter] / 60, table[[well]][!filter], pch = 20, col="grey45")
+    points(table$time[!filter] / 60, table[[well]][!filter], pch = 20, col = "grey45")
     
     #If a doubling time is saved on annotations, plot the doubling time function
     if (!is.null(annotations$doublingTime)) {
@@ -368,13 +380,13 @@ makeODPlots <- function(table, savePath,
     #If we were given an upper left annotation label
     if (!is.null(ul.label)) {  
       #Put the annotation text in the upper lefthand corner of the graph
-      text(x=xlim[1], y=ylim[2], labels=ul.label, adj=c(0,1))
+      text(x = xlim[1], y = ylim[2], labels = ul.label, adj = c(0,1))
     }
     
     #If we were given an upper left annotation label
     if (!is.null(lr.label)) {
       #Put the annotation text in the lower righthand corner of the graph
-      text(x=xlim[2], y=ylim[1], labels=ul.label, adj=c(1,0))
+      text(x = xlim[2], y = ylim[1], labels = ul.label, adj = c(1,0))
     }
     
   }
@@ -386,7 +398,7 @@ makeODPlots <- function(table, savePath,
       #If we were passed annotations, write them to the graph as the upper left label
       if (length(annotations)>0) {
         ul.label <- paste(
-          names(annotations), ": ", annotations[well,], sep="", collapse="\n" 
+          names(annotations), ": ", annotations[well,], sep = "", collapse = "\n" 
           )
       } else { 
         ul.label = NULL
@@ -396,7 +408,7 @@ makeODPlots <- function(table, savePath,
       jpeg(paste(savePath, paste(well, ".jpg"), sep="/"))
       
       #Make the individual plot
-      odPlot(well, main=well, xlab="Time (minutes)", ylab="OD", ul.label=ul.label)
+      odPlot(well, main = well, xlab = "Time (minutes)", ylab = "OD", ul.label = ul.label)
       
       #Save the image
       dev.off()
@@ -409,7 +421,7 @@ makeODPlots <- function(table, savePath,
     
     #Calculate a size for the composite image and open a file for writing
     imageDim <- composite * dim(plateLabels) #c(row, col)
-    png(filename=paste(savePath, "composite.png", sep="/"), width=imageDim[2], height=imageDim[1])
+    png(filename=paste(savePath, "composite.png", sep = "/"), width = imageDim[2], height = imageDim[1])
     
     #Save the starting par values, so that we can restore later
     original.par = par(
@@ -426,7 +438,7 @@ makeODPlots <- function(table, savePath,
       
       #If we were passed annotations, write them to the graph as the upper left label
       if (length(annotations)>0) {
-        ul.label <- paste(c(well, annotations[well,]), sep="", collapse="\n")
+        ul.label <- paste(c(well, annotations[well,]), sep = "", collapse = "\n")
       } else { 
         ul.label = NULL
       }
@@ -448,7 +460,7 @@ makeODPlots <- function(table, savePath,
 
 #Utility functions
 vectorDeltas <- function(v) { return( abs( v[-1] - v[-length(v)] ) ) }
-aveVectorDelta <- function(v, ave=mean) { return( ave(vectorDeltas(v)) ) }
+aveVectorDelta <- function(v, ave = mean) { return( ave(vectorDeltas(v)) ) }
 cleanCall <- function(f, ..., optArgs=list()) {
   #TODO is there anything in the standard library like this?
   
@@ -467,8 +479,8 @@ cleanCall <- function(f, ..., optArgs=list()) {
 cleanWrapper <- function(f, optArgs) {
   force(f)
   return(
-    function(...) { 
-      return( cleanCall(f, ..., optArgs=optArgs) )
+    function(...) {
+      return( cleanCall(f, ..., optArgs = optArgs) )
     }
     )
 }
