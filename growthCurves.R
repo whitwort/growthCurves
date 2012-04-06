@@ -405,7 +405,7 @@ makeODPlots <- function(table, savePath,
       }
       
       #Start a new JPEG
-      jpeg(paste(savePath, paste(well, ".jpg"), sep="/"))
+      jpeg(paste(savePath, paste(well, ".jpg", sep=""), sep="/"))
       
       #Make the individual plot
       odPlot(well, main = well, xlab = "Time (minutes)", ylab = "OD", ul.label = ul.label)
