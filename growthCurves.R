@@ -58,7 +58,7 @@ analyzeGrowthCurves <- function(tablePath,
   
   #If we were given a zip path
   if (!is.null(zipPath) && !is.null(savePath)) {
-    zip( zipPath, files = dir(savePath) )
+    zip( zipPath, files = paste(savePath, dir(savePath), sep="/") )
   }
   
   return(resultTable)
