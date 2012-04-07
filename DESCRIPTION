@@ -1,9 +1,13 @@
 Package: growthCurves
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Microbial growth curve analysis
+Version: 0.1
 Date: 2012-04-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Gregg Whitworth
+Maintainer: Gregg Whitworth <whitwort@gmail.com>
+Description: This package provides a set of tools for analyzing optical density data obtained from microbial cultures grown in 96- or 384-well plates.  Tools are include to help with optimized doubling time calculations as well as data annotation and visualization.
+URL: http://github.com/whitwort/growthCurves
+BugReports: http://github.com/whitwort/growthCurves/issues
+Depends: R (>=2.14.0)
+Suggests:  gdata
+License: LGPL-3

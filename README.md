@@ -19,4 +19,4 @@ This will run an analysis producing an number of files in the current working di
 
 ## License
 
-Copyright © 2012 Gregg Whitworth.  Licensed under the [MIT License](http://mit-license.org).
+Copyright © 2012 Gregg Whitworth and licensed under [LGPLv3](http://www.gnu.org/copyleft/lesser.html).
