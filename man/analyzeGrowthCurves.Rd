@@ -1,118 +1,63 @@
 \name{analyzeGrowthCurves}
 \alias{analyzeGrowthCurves}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Kitchen-sink wrapper for optical growth curve analysis.}
 \usage{
-analyzeGrowthCurves(tablePath, savePath = NULL, tableParser = magellanTable, annotationPath = NULL, annotationParser = plateSetup, plateLabels = default.plate.96, filters = c(default.lagFilter, default.plateauFilter), zipPath = NULL, ...)
+  analyzeGrowthCurves(tablePath, savePath = NULL,
+    tableParser = magellanTable, annotationPath = NULL,
+    annotationParser = plateSetup,
+    plateLabels = default.plate.96,
+    filters = c(default.lagFilter, default.plateauFilter),
+    zipPath = NULL, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{tablePath}{
-%%     ~~Describe \code{tablePath} here~~
-}
-  \item{savePath}{
-%%     ~~Describe \code{savePath} here~~
-}
-  \item{tableParser}{
-%%     ~~Describe \code{tableParser} here~~
-}
-  \item{annotationPath}{
-%%     ~~Describe \code{annotationPath} here~~
-}
-  \item{annotationParser}{
-%%     ~~Describe \code{annotationParser} here~~
-}
-  \item{plateLabels}{
-%%     ~~Describe \code{plateLabels} here~~
-}
-  \item{filters}{
-%%     ~~Describe \code{filters} here~~
-}
-  \item{zipPath}{
-%%     ~~Describe \code{zipPath} here~~
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{tablePath}{path on the local file system to be
+  passed to the tableParser}
+
+  \item{savePath}{optional path to a directory where
+  results should be saved; defaults to NULL which means
+  that no tables or images will be saved.}
+
+  \item{tableParser}{a function to use to parse tables; see
+  \code{\link{csvTable}} for an example.}
+
+  \item{annotationPath}{path on the local file system to
+  pass to the annotationParser}
+
+  \item{annotationParser}{a function to use to parse
+  annotation files; see \code{\link{plateSetup}} for an
+  example.}
+
+  \item{plateLabels}{a matrix of well labels that matches
+  the shape of the plate data being analyzed.  Two default
+  layouts are provided: \code{default.plate.96} and
+  \code{\link{default.plate.384}}}
+
+  \item{filters}{a list of unnamed functions which will be
+  used to filter OD data; see
+  \code{\link{default.lagFilter}} and
+  \code{\link{default.plateauFilter}} for examples.}
+
+  \item{zipPath}{path on the local file system where a new
+  zipfile archive should be written containing all files
+  produced in the analysis.  Defaults to NULL which
+  indicates no zip file should be created.}
+
+  \item{...}{all additional arguments are passed along to
+  the parser, filter, analysis and visualization functions
+  that recieve them.}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  a data.frame object holding the results of the analysis
+  and annotations
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+\description{
+  This function loads one or more tables, a set of well
+  label annotations (if given), and then calculates
+  doubling times (\code{\link{doublingTime}}) and produces
+  individual and composite OD plots
+  (\code{\link{makeODPlots}}). The default analysis
+  pipeline can be tuned by passing any arguments accepted
+  by table parsers, annotation parsers, data filters,
+  analysis functiond and visualization functions.
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (tablePath, savePath = NULL, tableParser = magellanTable, 
-    annotationPath = NULL, annotationParser = plateSetup, plateLabels = default.plate.96, 
-    filters = c(default.lagFilter, default.plateauFilter), zipPath = NULL, 
-    ...) 
-{
-    optArgs <- list(...)
-    optArgs$wellLabels = c(t(plateLabels))
-    wrapCall <- function(f) {
-        return(cleanWrapper(f, optArgs))
-    }
-    filters <- lapply(filters, wrapCall)
-    optArgs$filters <- filters
-    tables <- lapply(tablePath, wrapCall(tableParser))
-    if (length(tables) > 1) {
-        table <- concatenateTables(tables)
-    }
-    else {
-        table <- tables[[1]]
-    }
-    if (!is.null(annotationPath)) {
-        resultTable <- wrapCall(annotationParser)(filePath = annotationPath)
-    }
-    else {
-        resultTable <- data.frame(row.names = optArgs$wellLabels, 
-            check.names = TRUE)
-    }
-    resultTable$doublingTime <- wrapCall(doublingTime)(table = table)
-    optArgs$annotations <- resultTable
-    if (!is.null(savePath)) {
-        wrapCall(makeODPlots)(table = table, savePath = savePath)
-    }
-    if (!is.null(savePath)) {
-        write.table(resultTable, paste(savePath, "results.txt", 
-            sep = "/"), sep = "\t", col.names = NA)
-    }
-    if (!is.null(zipPath) && !is.null(savePath)) {
-        zip(zipPath, files = paste(savePath, dir(savePath), sep = "/"))
-    }
-    return(resultTable)
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

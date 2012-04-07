@@ -1,4 +1,36 @@
 #Wrapper functions
+
+#' Kitchen-sink wrapper for optical growth curve analysis.
+#'
+#' This function loads one or more tables, a set of well label annotations (if 
+#' given), and then calculates doubling times (\code{\link{doublingTime}}) and 
+#' produces individual and composite OD plots (\code{\link{makeODPlots}}). The
+#' default analysis pipeline can be tuned by passing any arguments accepted by
+#' table parsers, annotation parsers, data filters, analysis functiond and 
+#' visualization functions.
+#'
+#' @export
+#'
+#' @param tablePath path on the local file system to be passed to the tableParser
+#' @param savePath optional path to a directory where results should be saved; 
+#'   defaults to NULL which means that no tables or images will be saved.
+#' @param tableParser a function to use to parse tables; see \code{\link{csvTable}}
+#'   for an example.
+#' @param annotationPath path on the local file system to pass to the annotationParser
+#' @param annotationParser a function to use to parse annotation files; see
+#'   \code{\link{plateSetup}} for an example.
+#' @param plateLabels a matrix of well labels that matches the shape of the plate
+#'   data being analyzed.  Two default layouts are provided: \code{default.plate.96}
+#'   and \code{\link{default.plate.384}}
+#' @param filters a list of unnamed functions which will be used to filter OD 
+#'   data; see \code{\link{default.lagFilter}} and \code{\link{default.plateauFilter}} 
+#'   for examples.
+#' @param zipPath path on the local file system where a new zipfile archive should
+#'   be written containing all files produced in the analysis.  Defaults to NULL
+#'   which indicates no zip file should be created.
+#' @param ... all additional arguments are passed along to the parser, filter, 
+#'   analysis and visualization functions that recieve them.
+#' @return a data.frame object holding the results of the analysis and annotations
 analyzeGrowthCurves <- function(tablePath, 
                                 savePath          = NULL,
                                 tableParser       = magellanTable, 
@@ -13,7 +45,7 @@ analyzeGrowthCurves <- function(tablePath,
   #Listify additional optional arguments
   optArgs <- list(...)
   
-  #Calculate common arguments
+  #TODO refector below to put the wellLabels ugliness to rest.
   optArgs$wellLabels = c(t(plateLabels))
 
   #We'll simplify the wrapping interface with a little closure
