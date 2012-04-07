@@ -297,7 +297,8 @@ doublingTime <- function(table,
                          ) {
   
   calculateDT <- function(col) {
-     #Apply each filter to the column of OD data
+    
+    #Apply each filter to the column of OD data
     filter <- c(TRUE)
     for (f in filters) { filter <- filter & f(col) }
     
