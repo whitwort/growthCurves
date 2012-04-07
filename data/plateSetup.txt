@@ -1,0 +1,19 @@
+Strain
+A1 -> D12: WT
+E1 -> H12: yca1
+  
+Condition
+A1 -> H6:  YPD
+A7 -> H8:  6mM CuSO4
+A9 -> H10:  30mM CuSO4
+A11 -> H12: 60mM CuSO4
+
+Pierce
+A1 -> A12: none
+E1 -> E12: none
+B1 -> B12: small
+F1 -> F12: small
+C1 -> C12: medium
+G1 -> G12: medium
+D1 -> D12: large
+H1 -> H12: large
