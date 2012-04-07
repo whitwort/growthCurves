@@ -11,8 +11,6 @@ Description: This package provides a set of tools for analyzing optical density
     as data annotation and visualization.
 URL: http://github.com/whitwort/growthCurves
 BugReports: http://github.com/whitwort/growthCurves/issues
-Depends:
-    R (>=2.14.0)
 Suggests:
     gdata
 License: LGPL-3
