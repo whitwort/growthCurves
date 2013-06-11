@@ -58,6 +58,6 @@
   (\code{\link{makeODPlots}}). The default analysis
   pipeline can be tuned by passing any arguments accepted
   by table parsers, annotation parsers, data filters,
-  analysis functiond and visualization functions.
+  analysis functions and visualization functions.
 }
 

@@ -1,4 +1,4 @@
-#Wrapper functions
+## Wrapper functions ##
 
 #' Kitchen-sink wrapper for optical growth curve analysis.
 #'
@@ -6,7 +6,7 @@
 #' given), and then calculates doubling times (\code{\link{doublingTime}}) and 
 #' produces individual and composite OD plots (\code{\link{makeODPlots}}). The
 #' default analysis pipeline can be tuned by passing any arguments accepted by
-#' table parsers, annotation parsers, data filters, analysis functiond and 
+#' table parsers, annotation parsers, data filters, analysis functions and 
 #' visualization functions.
 #'
 #' @export
@@ -97,6 +97,9 @@ analyzeGrowthCurves <- function(tablePath,
   
 }
 
+
+## Plate labels ##
+
 #Default labels for 96- and 384-well plates (character matrix with the same shape as the plate)
 default.plate.96 = matrix(
   data  = paste( rep(LETTERS[1:8], each = 12), 1:12, sep = ""), 
@@ -112,7 +115,23 @@ default.plate.384 = matrix(
   byrow = TRUE
   )
 
-#OD table parsers
+
+## OD table parsers ##
+
+#' Loads data from a csv (comma-separated) text file.
+#'
+#' This function uses the builtin \code{\link{read.csv}} to parse a comma-separated
+#' file containg OD density readings over the experimental time course.  The left-
+#' most column should contain time points (with earliest-to-latest timepoints 
+#' givendown the rows of the table).  The numbers in this column should be unquoted.
+#' The remaining columns should give, in order, the time course data for each well
+#' on the plate (for example, starting with well A1 in column to and ending with
+#' well H12 in column 97).
+#'
+#' @export
+#'
+#' @param filePath path on the local file system to be passed to the parser
+#' @return a data.frame object holding the parsed data.
 csvTable <- function(filePath) { return( read.csv(filePath) ) }
 tabTable <- function(filePath) { return( read.delim(filePath) ) }
 xlsTable <- function(filePath) {
