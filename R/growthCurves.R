@@ -1,6 +1,54 @@
-## Wrapper functions ##
+## API ##
 
-#' Kitchen-sink wrapper for optical growth curve analysis.
+analyze <- function( projectPath  = getwd()
+                   , sourceData   = concatenateTables(lapply)
+                   , sourcePath   = list.files(projectPath, pattern = attr(dataParser, "ext"))
+                   , design       = designParser(designFile)
+                   , designFile   
+                   , channels     = design$channels
+                   , dataParser   = magellanParser
+                   , designParser = designParser                     
+                   
+                   ) {
+  
+  
+  
+}
+
+
+# Utilities
+concatenateTables <- function(tables, 
+                              timeOffsets = round( cumsum( sapply( tables
+                                                 , function(t) { 
+                                                    return( 
+                                                      aveVectorDelta(t$time) + tail(t$time, 1) 
+                                                    )}
+                                                 )))
+                              ) {
+  
+  #Apply each offset to the times on each table
+  l <- length(tables)
+  
+  if (l == 1) { return(tables) }
+  
+  fixedTables <- mapply( function(table, offset) {
+                            table$time <- table$time + offset
+                            return(table)
+                         }
+                       , tables[2:l]
+                       , timeOffsets[1:(l-1)]
+                       , SIMPLIFY = FALSE
+                       )
+  
+  return( do.call(rbind, c(tables[1], fixedTables)) )
+  
+}
+
+
+### #### ####
+
+#' Deprecated growth curve analysis function call.  Please use
+#' (\code{\link{analyze}}) instead.
 #'
 #' This function loads one or more tables, a set of well label annotations (if 
 #' given), and then calculates doubling times (\code{\link{doublingTime}}) and 
@@ -23,7 +71,7 @@
 #'   data being analyzed.  Two default layouts are provided: \code{default.plate.96}
 #'   and \code{\link{default.plate.384}}
 #' @param filters a list of unnamed functions which will be used to filter OD 
-#'   data; see \code{\link{default.lagFilter}} and \code{\link{default.plateauFilter}} 
+#'   data; see \code{\link{default.lagFilter}} and \code{\link{default.plateauFilter}}
 #'   for examples.
 #' @param zipPath path on the local file system where a new zipfile archive should
 #'   be written containing all files produced in the analysis.  Defaults to NULL
@@ -41,6 +89,8 @@ analyzeGrowthCurves <- function(tablePath,
                                 zipPath           = NULL,
                                 ...
                                 )  {
+  
+  warning("`analyzeGrowthCurves` has been deprecated in favor of the `analyze` function.")
   
   #Listify additional optional arguments
   optArgs <- list(...)
@@ -182,34 +232,7 @@ validateTable <- function(table) {
   
 }
 
-concatenateTables <- function(tables, 
-                              timeOffsets = round( cumsum( sapply( tables, 
-                                            function(t) { 
-                                              return(
-                                                aveVectorDelta(t$time) + tail(t$time,1)
-                                                )}
-                                            )))
-                              ) {
-  
-  #Apply each offset to the times on each table
-  l <- length(tables)
-  fixedTables <- mapply(
-    function(table, offset) {
-      table$time <- table$time + offset
-      return(table)
-    },
-    
-    #Apply first offset to the second table, and so on...
-    tables[2:l], 
-    timeOffsets[1:(l-1)], 
-    SIMPLIFY = FALSE
-    
-  )
-  
-  #Concatenate the data frames using rbind (row bind), executed as a do.call
-  return( do.call(rbind, c(tables[1], fixedTables)) )
-  
-}
+
 
 #Plate annotation parsers
 plateSetup <- function(filePath, plateLabels = default.plate.96) {

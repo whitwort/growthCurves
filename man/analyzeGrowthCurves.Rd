@@ -1,13 +1,12 @@
 \name{analyzeGrowthCurves}
 \alias{analyzeGrowthCurves}
-\title{Kitchen-sink wrapper for optical growth curve analysis.}
+\title{Deprecated growth curve analysis function call.  Please use
+(\code{\link{analyze}}) instead.}
 \usage{
-  analyzeGrowthCurves(tablePath, savePath = NULL,
-    tableParser = magellanTable, annotationPath = NULL,
-    annotationParser = plateSetup,
-    plateLabels = default.plate.96,
-    filters = c(default.lagFilter, default.plateauFilter),
-    zipPath = NULL, ...)
+analyzeGrowthCurves(tablePath, savePath = NULL, tableParser = magellanTable,
+  annotationPath = NULL, annotationParser = plateSetup,
+  plateLabels = default.plate.96, filters = c(default.lagFilter,
+  default.plateauFilter), zipPath = NULL, ...)
 }
 \arguments{
   \item{tablePath}{path on the local file system to be
@@ -47,17 +46,16 @@
   that recieve them.}
 }
 \value{
-  a data.frame object holding the results of the analysis
-  and annotations
+a data.frame object holding the results of the analysis and
+annotations
 }
 \description{
-  This function loads one or more tables, a set of well
-  label annotations (if given), and then calculates
-  doubling times (\code{\link{doublingTime}}) and produces
-  individual and composite OD plots
-  (\code{\link{makeODPlots}}). The default analysis
-  pipeline can be tuned by passing any arguments accepted
-  by table parsers, annotation parsers, data filters,
-  analysis functions and visualization functions.
+This function loads one or more tables, a set of well label
+annotations (if given), and then calculates doubling times
+(\code{\link{doublingTime}}) and produces individual and
+composite OD plots (\code{\link{makeODPlots}}). The default
+analysis pipeline can be tuned by passing any arguments
+accepted by table parsers, annotation parsers, data
+filters, analysis functions and visualization functions.
 }
 
