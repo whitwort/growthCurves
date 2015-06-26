@@ -4,6 +4,13 @@ growthCurves is a small [R script](http://www.r-project.org/) designed to aid an
 
 Deeper documentation will be comming soon, but what follows should be enough to get started if you are familiar with R.
 
+##Installing
+
+To install the development version of this package run:
+
+```r
+devtools::install_github("whitwort/growthCurves")
+```
 
 ##Running an analysis
 The wrapper function 'analyzeGrowthCurves' provides a simple interface to running a full analysis which produces growth curve graphs, incorporates well annotations, and calculates a doubling time for each well.
@@ -11,6 +18,8 @@ The wrapper function 'analyzeGrowthCurves' provides a simple interface to runnin
 With the [example files](https://github.com/whitwort/growthCurves/tree/master/examples) included in this repository in the current working directory, this function could be called with:
 
 ```r
+library(growthCurves)
+
 analyzeGrowthCurves( tablePath="sample.asc", annotationPath="plateSetup.txt", savePath="" )
 ```
 
