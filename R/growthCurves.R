@@ -47,9 +47,6 @@ concatenateTables <- function(tables,
 
 ### #### ####
 
-#' Deprecated growth curve analysis function call.  Please use
-#' (\code{\link{analyze}}) instead.
-#'
 #' This function loads one or more tables, a set of well label annotations (if 
 #' given), and then calculates doubling times (\code{\link{doublingTime}}) and 
 #' produces individual and composite OD plots (\code{\link{makeODPlots}}). The
@@ -90,7 +87,7 @@ analyzeGrowthCurves <- function(tablePath,
                                 ...
                                 )  {
   
-  warning("`analyzeGrowthCurves` has been deprecated in favor of the `analyze` function.")
+  # warning("`analyzeGrowthCurves` has been deprecated in favor of the `analyze` function.")
   
   #Listify additional optional arguments
   optArgs <- list(...)
@@ -178,7 +175,7 @@ default.plate.384 = matrix(
 #' on the plate (for example, starting with well A1 in column to and ending with
 #' well H12 in column 97).
 #'
-#' @export
+
 #'
 #' @param filePath path on the local file system to be passed to the parser
 #' @return a data.frame object holding the parsed data.
@@ -191,6 +188,10 @@ xlsTable <- function(filePath) {
 }
 
 #TODO Magellan export instructions
+#' @param filePath path on the local file system to be passed to the parser
+#' @return a data.frame object holding the parsed data.
+#' 
+#' @export
 magellanTable <- function(filePath, 
                           wellLabels        = c(t(default.plate.96)),
                           table.postprocess = validateTable
