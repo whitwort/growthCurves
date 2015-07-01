@@ -47,6 +47,8 @@ concatenateTables <- function(tables,
 
 ### #### ####
 
+#' Calculate doubling times for liquid culutres in multiwell plates
+#' 
 #' This function loads one or more tables, a set of well label annotations (if 
 #' given), and then calculates doubling times (\code{\link{doublingTime}}) and 
 #' produces individual and composite OD plots (\code{\link{makeODPlots}}). The
@@ -65,7 +67,7 @@ concatenateTables <- function(tables,
 #' @param annotationParser a function to use to parse annotation files; see
 #'   \code{\link{plateSetup}} for an example.
 #' @param plateLabels a matrix of well labels that matches the shape of the plate
-#'   data being analyzed.  Two default layouts are provided: \code{default.plate.96}
+#'   data being analyzed.  Two default layouts are provided: \code{\link{default.plate.96}}
 #'   and \code{\link{default.plate.384}}
 #' @param filters a list of unnamed functions which will be used to filter OD 
 #'   data; see \code{\link{default.lagFilter}} and \code{\link{default.plateauFilter}}
@@ -92,11 +94,11 @@ analyzeGrowthCurves <- function(tablePath,
   #Listify additional optional arguments
   optArgs <- list(...)
   
-  #TODO refector below to put the wellLabels ugliness to rest.
+  #TODO refactor below to put the wellLabels ugliness to rest.
   optArgs$wellLabels = c(t(plateLabels))
 
   #We'll simplify the wrapping interface with a little closure
-  wrapCall <- function(f) { return( cleanWrapper(f,optArgs) ) }
+  wrapCall <- function(f) { return( cleanWrapper(f, optArgs) ) }
   
   #Automatically wrap the filters, and save to optArgs
   filters <- lapply(filters, wrapCall)
@@ -147,7 +149,8 @@ analyzeGrowthCurves <- function(tablePath,
 
 ## Plate labels ##
 
-#Default labels for 96- and 384-well plates (character matrix with the same shape as the plate)
+#' Default labels for 96-well plates (character matrix with the same shape as the plate)
+#' @export
 default.plate.96 = matrix(
   data  = paste( rep(LETTERS[1:8], each = 12), 1:12, sep = ""), 
   nrow  = 8, 
@@ -155,13 +158,14 @@ default.plate.96 = matrix(
   byrow = TRUE
   )
 
+#' Default labels for 384-well plates (character matrix with the same shape as the plate)
+#' @export
 default.plate.384 = matrix(
   data  = paste( rep(LETTERS[1:16], each = 24), 1:24, sep = ""), 
   nrow  = 16, 
   ncol  = 24, 
   byrow = TRUE
   )
-
 
 ## OD table parsers ##
 
@@ -187,11 +191,14 @@ xlsTable <- function(filePath) {
   return( read.xls(filePath) )
 }
 
-#TODO Magellan export instructions
-#' @param filePath path on the local file system to be passed to the parser
-#' @return a data.frame object holding the parsed data.
+#' Loads data from a .asc file exported by Magellan.
 #' 
-#' @export
+#' @param filePath path on the local file system to be passed to the parser
+#' @param plateLabels a matrix of well labels that matches the shape of the plate
+#'   data being analyzed.  Two default layouts are provided: \code{\link{default.plate.96}}
+#'   and \code{\link{default.plate.384}}
+#' 
+#' @return a data.frame object holding the parsed data.
 magellanTable <- function(filePath, 
                           wellLabels        = c(t(default.plate.96)),
                           table.postprocess = validateTable
