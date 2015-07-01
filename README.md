@@ -15,7 +15,7 @@ devtools::install_github("whitwort/growthCurves")
 ##Running an analysis
 The wrapper function 'analyzeGrowthCurves' provides a simple interface to running a full analysis which produces growth curve graphs, incorporates well annotations, and calculates a doubling time for each well.
 
-With the [example files](https://github.com/whitwort/growthCurves/tree/master/examples) included in this repository in the current working directory, this function could be called with:
+With the [example files](https://github.com/whitwort/growthCurves/tree/master/inst/Example01) included in this repository in the current working directory, this function could be called with:
 
 ```r
 library(growthCurves)
